@@ -109,8 +109,8 @@ export default function Contact() {
             {/* Map placeholder (online-only, so a stylized panel) */}
             <div className="rounded-[2rem] overflow-hidden border-2 border-slate-100 shadow-sm" data-testid="contact-map">
               <iframe
-                title="Little Gurus Academy location"
-                src="https://www.openstreetmap.org/export/embed.html?bbox=72.7%2C18.9%2C72.95%2C19.3&layer=mapnik"
+                title="Little Gurus Academy location — Gurugram, Haryana"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=76.95%2C28.38%2C77.15%2C28.52&layer=mapnik&marker=28.4595%2C77.0266"
                 className="w-full h-64"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"

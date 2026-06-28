@@ -212,7 +212,7 @@ export default function PrivacyPolicy() {
       </section>
 
       {/* Grievance redressal CTA */}
-      <section id="grievance-redressal" className="pb-20" data-testid="grievance-section">
+      <section id="grievance" data-grievance="true" className="pb-20" data-testid="grievance-section">
         <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12">
           <div className="rounded-[2rem] bg-slate-900 text-white p-8 sm:p-12 relative overflow-hidden">
             <Blob className="h-72 w-72 -top-20 -right-10 bg-orange-500/30" />
