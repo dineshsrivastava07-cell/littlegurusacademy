@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import {
   Sparkles, ShieldCheck, Lock, Users, Puzzle, GraduationCap, Heart, Sprout,
-  ArrowRight, Play
+  ArrowRight, Play, Star, Quote
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -11,6 +12,7 @@ import {
 } from "@/lib/data";
 import { getAccent } from "@/lib/accent";
 import { FadeIn, SectionLabel, Blob } from "@/components/Bits";
+import { getPublicTestimonials } from "@/lib/api";
 
 const ICONS = { ShieldCheck, Lock, Users, Sparkles, Puzzle, GraduationCap, Heart, Sprout };
 
@@ -22,6 +24,7 @@ export default function Home() {
       <WhyUs />
       <ProgramsPreview />
       <DayAtAcademy />
+      <TestimonialsDynamic />
       <FinalCta />
     </div>
   );
