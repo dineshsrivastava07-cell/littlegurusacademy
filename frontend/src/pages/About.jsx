@@ -2,7 +2,6 @@ import { Sparkles, Heart, Target, ShieldCheck, Wifi, Smile, BookOpen } from "luc
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { TEAM } from "@/lib/data";
 import { FadeIn, SectionLabel, Blob } from "@/components/Bits";
 
 export default function About() {
@@ -38,10 +37,10 @@ export default function About() {
           <FadeIn className="lg:col-span-6" delay={0.1}>
             <SectionLabel>Our story</SectionLabel>
             <h2 className="mt-3 font-display text-4xl sm:text-5xl font-semibold text-slate-800 leading-tight">
-              From a tiny living room to thousands of homes.
+              Built by parents, for parents.
             </h2>
             <p className="mt-4 text-slate-600 text-lg leading-relaxed">
-              We started in 2020 with three kids, one laptop and a whiteboard taped to a wall. Today, Little Gurus is a warm online community of over 1,200 families — but our promise hasn't changed.
+              We were founded by parents, for parents — building a calm, caring online classroom where every child is truly seen. Our promise is simple: small classes, kind gurus, and lessons that feel like play.
             </p>
             <p className="mt-3 text-slate-600 text-lg leading-relaxed">
               Small classes. Caring gurus. Lessons that feel like play. Always.
@@ -78,38 +77,8 @@ export default function About() {
       </section>
 
       {/* Team */}
-      <section className="relative py-20 sm:py-24 bg-white" data-testid="team-section">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-          <div className="max-w-3xl">
-            <SectionLabel>Meet your gurus</SectionLabel>
-            <h2 className="mt-3 font-display text-4xl sm:text-5xl font-semibold text-slate-800 leading-tight">
-              Tiny humans. Mighty teachers.
-            </h2>
-            <p className="mt-4 text-lg text-slate-600">
-              Every educator is hand-picked, background-checked and trained in our gentle, play-first method.
-            </p>
-          </div>
-          <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {TEAM.map((t, i) => (
-              <FadeIn key={i} delay={i * 0.05}>
-                <Card className="overflow-hidden rounded-[2rem] bg-amber-50 border-2 border-amber-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300" data-testid={`team-card-${i}`}>
-                  <div className="aspect-[4/5] overflow-hidden">
-                    <img src={t.image} alt={t.name} className="w-full h-full object-cover" loading="lazy" />
-                  </div>
-                  <div className="p-5">
-                    <h3 className="font-display text-lg font-semibold text-slate-800">{t.name}</h3>
-                    <p className="text-xs font-bold uppercase tracking-widest text-orange-500 mt-1">{t.role}</p>
-                    <p className="mt-3 text-sm text-slate-600 leading-relaxed">{t.bio}</p>
-                  </div>
-                </Card>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Safety & facilities */}
-      <section className="relative py-20 sm:py-24">
+      <section className="relative py-20 sm:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
           <SectionLabel>Safety first</SectionLabel>
           <h2 className="mt-3 font-display text-4xl sm:text-5xl font-semibold text-slate-800 leading-tight max-w-3xl">

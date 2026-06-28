@@ -68,9 +68,13 @@ export default function Footer() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-3">
-              <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white p-1.5 shadow-md">
-                <img src="/logo.png" alt="Little Gurus Academy" className="h-full w-full object-contain" width="48" height="48" />
-              </span>
+              <img
+                src="/logo.png"
+                alt="Little Gurus Academy"
+                className="h-12 w-auto object-contain"
+                width="48"
+                height="48"
+              />
               <span className="font-display text-2xl font-semibold text-white">
                 Little <span className="text-orange-400">Gurus</span>
               </span>

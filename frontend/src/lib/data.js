@@ -17,7 +17,7 @@ export const TRUST_BADGES = [
   { icon: "ShieldCheck", label: "Certified Teachers" },
   { icon: "Lock", label: "Safe & Secure" },
   { icon: "Users", label: "Small Live Classes" },
-  { icon: "Sparkles", label: "5+ Years of Joy" },
+  { icon: "Sparkles", label: "Joyful Learning" },
 ];
 
 export const WHY_US = [

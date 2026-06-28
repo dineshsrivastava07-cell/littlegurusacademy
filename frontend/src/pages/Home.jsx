@@ -1,18 +1,16 @@
 import { Link } from "react-router-dom";
 import {
   Sparkles, ShieldCheck, Lock, Users, Puzzle, GraduationCap, Heart, Sprout,
-  Star, ArrowRight, Quote, ChevronLeft, ChevronRight, Play
+  ArrowRight, Play
 } from "lucide-react";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  TRUST_BADGES, WHY_US, PROGRAMS, TESTIMONIALS, STATS, DAY_TIMELINE, SITE,
+  TRUST_BADGES, WHY_US, PROGRAMS, DAY_TIMELINE, SITE,
 } from "@/lib/data";
 import { getAccent } from "@/lib/accent";
 import { FadeIn, SectionLabel, Blob } from "@/components/Bits";
-import CountUp from "@/components/CountUp";
 
 const ICONS = { ShieldCheck, Lock, Users, Sparkles, Puzzle, GraduationCap, Heart, Sprout };
 
@@ -24,8 +22,6 @@ export default function Home() {
       <WhyUs />
       <ProgramsPreview />
       <DayAtAcademy />
-      <StatsSection />
-      <Testimonials />
       <FinalCta />
     </div>
   );
@@ -78,18 +74,19 @@ function Hero() {
               </div>
             </FadeIn>
             <FadeIn delay={0.2}>
-              <div className="mt-8 flex items-center gap-3 text-sm text-slate-600">
-                <div className="flex -space-x-2">
-                  {["bg-orange-400","bg-sky-400","bg-emerald-400","bg-rose-400"].map((c,i)=>(
-                    <span key={i} className={`inline-block h-8 w-8 rounded-full ${c} border-2 border-white`} />
-                  ))}
-                </div>
-                <div>
-                  <div className="flex items-center gap-1 text-amber-500">
-                    {[...Array(5)].map((_,i)=><Star key={i} className="h-4 w-4 fill-current" />)}
-                  </div>
-                  <span className="font-semibold text-slate-800">1,200+ happy families</span> · loving every minute
-                </div>
+              <div className="mt-8 flex flex-wrap items-center gap-3 text-sm">
+                <span className="inline-flex items-center gap-2 rounded-full bg-white border-2 border-slate-100 px-4 py-2 shadow-sm">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                  <span className="font-semibold text-slate-700">100% Online</span>
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full bg-white border-2 border-slate-100 px-4 py-2 shadow-sm">
+                  <Users className="h-4 w-4 text-orange-500" />
+                  <span className="font-semibold text-slate-700">Small live classes (max 8)</span>
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full bg-white border-2 border-slate-100 px-4 py-2 shadow-sm">
+                  <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                  <span className="font-semibold text-slate-700">Vetted teachers</span>
+                </span>
               </div>
             </FadeIn>
           </div>
@@ -107,7 +104,7 @@ function Hero() {
                   />
                 </div>
 
-                {/* Floating cards */}
+                {/* Floating credibility cards (factual claims only) */}
                 <div className="hidden sm:flex absolute -left-6 top-10 items-center gap-3 rounded-2xl bg-white border-2 border-slate-100 shadow-lg px-4 py-3 animate-float-slow">
                   <span className="h-10 w-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
                     <ShieldCheck className="h-5 w-5" strokeWidth={2.5} />
@@ -126,11 +123,6 @@ function Hero() {
                     <p className="text-xs text-slate-500 font-semibold">Class size</p>
                     <p className="text-sm font-bold text-slate-800">Max 8 kids</p>
                   </div>
-                </div>
-
-                <div className="hidden lg:flex absolute -left-10 bottom-8 items-center gap-2 rounded-full bg-white border-2 border-slate-100 shadow-lg px-4 py-2 animate-float-fast">
-                  <span className="text-amber-500"><Star className="h-4 w-4 fill-current" /></span>
-                  <span className="text-sm font-bold text-slate-800">4.9 / 5 parent rating</span>
                 </div>
               </div>
             </FadeIn>
@@ -279,80 +271,6 @@ function DayAtAcademy() {
                 </FadeIn>
               ))}
             </ol>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function StatsSection() {
-  return (
-    <section className="relative py-16 sm:py-20" data-testid="stats">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="rounded-[2rem] bg-sky-50 border-2 border-sky-100 px-8 py-10 sm:p-14">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-            {STATS.map((s, i) => (
-              <FadeIn key={i} delay={i * 0.05}>
-                <div data-testid={`stat-${i}`}>
-                  <div className="font-display text-4xl sm:text-5xl font-semibold text-slate-800">
-                    <CountUp end={s.value} suffix={s.suffix} />
-                  </div>
-                  <p className="mt-2 text-sm sm:text-base text-slate-600 font-semibold">{s.label}</p>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Testimonials() {
-  const [idx, setIdx] = useState(0);
-  const total = TESTIMONIALS.length;
-  const next = () => setIdx((i) => (i + 1) % total);
-  const prev = () => setIdx((i) => (i - 1 + total) % total);
-
-  return (
-    <section className="relative py-20 sm:py-28 bg-white" data-testid="testimonials">
-      <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 text-center">
-        <SectionLabel>Loved by parents</SectionLabel>
-        <h2 className="mt-3 font-display text-4xl sm:text-5xl font-semibold text-slate-800 leading-tight">
-          Real words. Real grins.
-        </h2>
-
-        <div className="mt-12 relative">
-          <div className="rounded-[2rem] bg-amber-50 border-2 border-amber-100 p-8 sm:p-12 text-left" key={idx}>
-            <Quote className="h-10 w-10 text-orange-400" strokeWidth={2.5} />
-            <p className="mt-5 text-xl sm:text-2xl text-slate-800 leading-relaxed font-medium" data-testid="testimonial-text">
-              {TESTIMONIALS[idx].text}
-            </p>
-            <div className="mt-6 flex items-center justify-between flex-wrap gap-3">
-              <div>
-                <p className="font-bold text-slate-800" data-testid="testimonial-name">{TESTIMONIALS[idx].name}</p>
-                <p className="text-sm text-slate-500">{TESTIMONIALS[idx].location}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button onClick={prev} aria-label="Previous testimonial" data-testid="testimonial-prev"
-                        className="h-11 w-11 rounded-full bg-white border-2 border-slate-100 hover:bg-orange-50 hover:border-orange-200 flex items-center justify-center">
-                  <ChevronLeft className="h-5 w-5" />
-                </button>
-                <button onClick={next} aria-label="Next testimonial" data-testid="testimonial-next"
-                        className="h-11 w-11 rounded-full bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center">
-                  <ChevronRight className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-5 flex items-center justify-center gap-2">
-            {TESTIMONIALS.map((_, i) => (
-              <button key={i} onClick={() => setIdx(i)} aria-label={`Go to testimonial ${i+1}`}
-                      data-testid={`testimonial-dot-${i}`}
-                      className={`h-2 rounded-full transition-all ${i === idx ? "w-8 bg-orange-500" : "w-2 bg-slate-300"}`} />
-            ))}
           </div>
         </div>
       </div>
