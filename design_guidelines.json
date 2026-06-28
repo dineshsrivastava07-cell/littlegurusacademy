@@ -1,0 +1,119 @@
+{
+  "project_name": "Little Gurus Academy",
+  "domain": "Kids Online Education",
+  "theme": "light",
+  "archetype": "Archetype 6 (Vibrant Play) blended with Archetype 1 (Organic & Earthy) for parent trust",
+  "brand_voice": "Friendly, nurturing, playful but trustworthy, premium, safe.",
+  "typography": {
+    "heading_font": "Fredoka",
+    "body_font": "Nunito",
+    "hierarchy": {
+      "h1": "text-5xl sm:text-6xl font-semibold tracking-tight leading-tight",
+      "h2": "text-4xl sm:text-5xl font-semibold tracking-tight",
+      "h3": "text-2xl sm:text-3xl font-medium",
+      "h4": "text-xl font-medium",
+      "body_large": "text-lg sm:text-xl leading-relaxed text-slate-600",
+      "body": "text-base leading-relaxed text-slate-600",
+      "small_label": "text-sm font-bold uppercase tracking-[0.15em] text-orange-500"
+    },
+    "instruction": "Use Fredoka for headings to convey softness and playfulness. Use Nunito for body text for supreme legibility and a friendly, rounded aesthetic. Never use generic sans like Inter. Ensure text contrast against soft backgrounds."
+  },
+  "colors": {
+    "background": {
+      "primary": "bg-amber-50",
+      "secondary": "bg-white",
+      "tertiary": "bg-sky-50"
+    },
+    "brand": {
+      "primary": "bg-orange-400 hover:bg-orange-500 text-white",
+      "secondary": "bg-sky-400 hover:bg-sky-500 text-white",
+      "accent_yellow": "bg-amber-300",
+      "accent_mint": "bg-emerald-300"
+    },
+    "text": {
+      "primary": "text-slate-800",
+      "secondary": "text-slate-600",
+      "inverse": "text-white"
+    },
+    "borders": {
+      "subtle": "border-slate-200"
+    },
+    "instruction": "Avoid pure white for main backgrounds; use amber-50 to feel warm and organic. Use vibrant but pastel-leaning colors (orange, sky, mint, amber) to create a joyful, premium feel without looking cheap. Text should be deep slate, not pure black."
+  },
+  "spacing_and_layout": {
+    "philosophy": "Generous Spacing, Bento Grids, Asymmetry",
+    "containers": "max-w-7xl mx-auto px-6 sm:px-8 lg:px-12",
+    "sections": "py-20 sm:py-24 lg:py-32",
+    "cards": "p-8 sm:p-10",
+    "border_radius": {
+      "buttons": "rounded-full",
+      "cards": "rounded-[2rem]",
+      "images": "rounded-[2rem]"
+    },
+    "grid_modes": {
+      "bento": "grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8",
+      "standard": "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+    }
+  },
+  "surface_styles": {
+    "cards": "bg-white rounded-[2rem] border-2 border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300",
+    "glass": "bg-white/80 backdrop-blur-xl border border-white/40 shadow-lg",
+    "instruction": "Apply the 'Tactile Neumorphism' variant: mix soft shadows with crisp 2px borders (border-slate-100) to ensure shapes feel physical like toys or building blocks. Navigation should use the 'Crystal Glass' effect."
+  },
+  "motion_and_interactions": {
+    "hover_states": "Buttons scale up slightly (scale-105). Cards lift (-translate-y-2) and gain deeper shadows.",
+    "transitions": "transition-all duration-300 ease-out",
+    "animations": "Use Framer Motion for gentle entrance stagger on grids (Why Us, Programs). Add continuous slow float animation (y: [-10, 10, -10]) to decorative background blobs or shapes."
+  },
+  "icons": {
+    "library": "lucide-react",
+    "style": "Use strokeWidth={2.5} for a chunkier, friendlier look. Enclose icons in soft colored circles (e.g., bg-orange-100 text-orange-500 p-3 rounded-full)."
+  },
+  "page_sections_instructions": {
+    "navigation": "Sticky Crystal Glass header (z-50). Logo: Lucide 'Sparkles' or 'BookOpen' + text 'Little Gurus'. Desktop: links + secondary CTA + primary CTA ('Enroll Now'). Mobile: elegant full-screen overlay menu.",
+    "hero": "Asymmetric split layout. Left: H1, subtext, dual CTAs ('Book a Free Tour' [primary, orange], 'View Programs' [outline]). Right: Large masked image of child learning online with floating decorative shapes (stars, circles).",
+    "trust_strip": "Horizontal flowing list of trust badges (Certified Teachers, Small Classes, Safe, 10+ Years). Use soft pastel backgrounds for badges.",
+    "why_us": "Bento grid (Tetris style). Mix large featured cards with smaller stat/icon cards. Emphasize holistic, play-based virtual learning.",
+    "programs_preview": "Grid of age-based cards. Card content: Age range, Program Name, 3 bullet points, 'Enquire' button. Give each card a distinct accent color theme (e.g., Mint for 2-4, Sky for 5-7, Orange for 8-10).",
+    "timeline": "Vertical staggered list or horizontal scroll for 'A Day at Little Gurus'. Use icons and soft photos showing virtual circle time, activities, etc.",
+    "testimonials": "Carousel (Swiper or Framer Motion slider) featuring parent reviews. Highlight peace of mind and child engagement.",
+    "admissions_fees": "3-step process cards (Simple linear flow). Fees table should be clean, using the 'Grid Borders' tech look but softened with brand colors.",
+    "forms": "Use Shadcn Form/Input but heavily customize: rounded-2xl inputs, thick focus rings (focus:ring-orange-400), floating labels.",
+    "footer": "Darker background (bg-slate-900) to ground the page. White text. Large friendly CTA ('Let's start learning!'), newsletter signup, and quick links."
+  },
+  "image_urls": {
+    "hero": [
+      {
+        "url": "https://images.pexels.com/photos/7548729/pexels-photo-7548729.jpeg",
+        "description": "Young girl using a tablet for online learning, focused with digital pen. Excellent for hero section right side."
+      }
+    ],
+    "about_parents": [
+      {
+        "url": "https://images.pexels.com/photos/8430234/pexels-photo-8430234.jpeg",
+        "description": "Father bonding with daughter using laptop at home. Highlights parental involvement and trust."
+      }
+    ],
+    "programs": [
+      {
+        "url": "https://images.unsplash.com/photo-1495654794940-1c0cd2aeedc1",
+        "description": "Boy sitting using tablet. Good for Preschool online learning program card."
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1623076189461-f7706b741c04",
+        "description": "Little girl sitting at a table with a laptop. Good for After-School Tutoring program card."
+      }
+    ],
+    "background_textures": [
+      {
+        "url": "https://images.unsplash.com/photo-1655998233171-ee5b130acba5",
+        "description": "Soft fluid background pattern. Use with very low opacity (opacity-10) or mix-blend modes to add texture behind sections."
+      }
+    ]
+  },
+  "accessibility_and_testing": {
+    "contrast": "Ensure all text over colored backgrounds meets WCAG AA standards. If putting text on Orange, ensure it is white and bold.",
+    "test_ids": "CRITICAL: Add `data-testid` to all interactive elements. E.g., `data-testid='hero-book-tour-btn'`, `data-testid='nav-enroll-link'`, `data-testid='program-enquire-btn'`, `data-testid='contact-form-submit'`.",
+    "focus_states": "All buttons and links MUST have distinct focus rings: `focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-400/50`"
+  }
+}
