@@ -174,7 +174,7 @@ export default function Admissions() {
             </ul>
           </div>
           <div className="lg:col-span-7">
-            <EnquiryForm defaultProgram={defaultProgram} />
+            <EnquiryForm key={defaultProgram || "default"} defaultProgram={defaultProgram} />
           </div>
         </div>
       </section>

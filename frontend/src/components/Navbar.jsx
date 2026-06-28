@@ -91,7 +91,7 @@ export default function Navbar() {
       {/* Mobile drawer */}
       {open && (
         <div
-          className="lg:hidden fixed top-20 left-0 right-0 bottom-0 bg-amber-50/98 backdrop-blur-xl overflow-y-auto"
+          className="lg:hidden fixed inset-x-0 top-20 h-[calc(100vh-5rem)] bg-amber-50/98 backdrop-blur-xl overflow-y-auto"
           data-testid="nav-mobile-menu"
         >
           <div className="px-6 py-8 flex flex-col gap-2">
