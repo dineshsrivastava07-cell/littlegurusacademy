@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Link } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -25,6 +27,9 @@ const schema = z.object({
   child_age: z.string().min(1, "Choose an age"),
   program: z.string().min(1, "Pick a program"),
   message: z.string().max(2000).optional().or(z.literal("")),
+  consent: z.literal(true, {
+    errorMap: () => ({ message: "Please give consent to continue (DPDP Act, 2023)" }),
+  }),
 });
 
 const AGES = ["2", "3", "4", "5", "6", "7", "8", "9", "10"];
@@ -34,13 +39,14 @@ export default function EnquiryForm({ defaultProgram = "", compact = false }) {
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: "", email: "", phone: "", child_age: "", program: defaultProgram, message: "",
+      name: "", email: "", phone: "", child_age: "", program: defaultProgram, message: "", consent: false,
     },
     mode: "onTouched",
   });
 
   const programValue = form.watch("program") || "";
   const ageValue = form.watch("child_age") || "";
+  const consentValue = form.watch("consent") || false;
 
   useEffect(() => {
     if (defaultProgram) {
@@ -50,10 +56,13 @@ export default function EnquiryForm({ defaultProgram = "", compact = false }) {
 
   const onSubmit = async (data) => {
     try {
-      await submitEnquiry({ ...data, source: "enquiry-form" });
+      // Strip consent flag from payload — we don't store it as content;
+      // submission itself is the recorded act of consent (DPDP Act 2023).
+      const { consent: _consent, ...payload } = data;
+      await submitEnquiry({ ...payload, source: "enquiry-form" });
       setDone(true);
       toast.success("Got it! A guru will reach out within 24 hours.");
-      form.reset({ name: "", email: "", phone: "", child_age: "", program: defaultProgram, message: "" });
+      form.reset({ name: "", email: "", phone: "", child_age: "", program: defaultProgram, message: "", consent: false });
     } catch (e) {
       toast.error("Couldn't send right now. Please try again or email us.");
     }
@@ -159,6 +168,23 @@ export default function EnquiryForm({ defaultProgram = "", compact = false }) {
           </Field>
         </div>
       </div>
+
+      <div className="mt-6 rounded-2xl bg-amber-50/70 border-2 border-amber-100 p-4 flex items-start gap-3" data-testid="enquiry-consent-wrap">
+        <Checkbox
+          id="enquiry-consent"
+          checked={consentValue}
+          onCheckedChange={(v) => form.setValue("consent", v === true, { shouldValidate: true })}
+          className="mt-0.5 h-5 w-5 border-2 border-slate-300 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
+          data-testid="enquiry-consent-checkbox"
+        />
+        <label htmlFor="enquiry-consent" className="text-sm text-slate-700 leading-relaxed cursor-pointer select-none">
+          I consent to {`Little Gurus Academy`} processing my and my child's personal data for the purposes described in the{" "}
+          <Link to="/privacy-policy" className="font-semibold text-orange-600 hover:text-orange-700 underline underline-offset-2">Privacy Policy</Link>, in accordance with India's <b>DPDP Act, 2023</b>. I can withdraw consent any time.
+        </label>
+      </div>
+      {form.formState.errors.consent?.message && (
+        <p className="mt-2 text-xs font-semibold text-rose-600" data-testid="enquiry-consent-error">{form.formState.errors.consent.message}</p>
+      )}
 
       <Button
         type="submit"

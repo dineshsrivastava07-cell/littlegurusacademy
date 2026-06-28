@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { Sparkles, Instagram, Youtube, Mail, Clock, ArrowRight } from "lucide-react";
+import { Sparkles, Instagram, Youtube, Mail, Clock, ArrowRight, ShieldCheck, MapPin } from "lucide-react";
 import { NAV_LINKS, SITE } from "@/lib/data";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -119,6 +119,10 @@ export default function Footer() {
                 <span>{SITE.hours}</span>
               </li>
               <li className="flex items-start gap-2">
+                <MapPin className="h-4 w-4 mt-0.5 text-orange-400" />
+                <span>{SITE.address}</span>
+              </li>
+              <li className="flex items-start gap-2">
                 <Sparkles className="h-4 w-4 mt-0.5 text-orange-400" />
                 <span>{SITE.mode}</span>
               </li>
@@ -150,9 +154,21 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} Little Gurus Academy. Made with love for little learners.</p>
-          <p>Privacy · Terms · Safe-by-design online classes</p>
+        <div className="mt-12 pt-6 border-t border-slate-800 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between text-xs text-slate-500">
+          <p>© {new Date().getFullYear()} {SITE.name}. Made with love for little learners in India.</p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <Link to="/privacy-policy" className="hover:text-orange-300 font-semibold" data-testid="footer-privacy-link">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-orange-300 font-semibold" data-testid="footer-terms-link">Terms of Use</Link>
+            <Link to="/privacy-policy#grievance" className="hover:text-orange-300 font-semibold" data-testid="footer-grievance-link">Grievance</Link>
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-3 py-1 font-bold tracking-wide"
+              data-testid="footer-dpdp-badge"
+              title="Compliant with India's DPDP Act, 2023"
+            >
+              <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2.5} />
+              DPDP Compliant
+            </span>
+          </div>
         </div>
       </div>
     </footer>

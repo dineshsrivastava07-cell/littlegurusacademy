@@ -4,8 +4,11 @@ export const SITE = {
   name: "Little Gurus Academy",
   tagline: "Where little minds grow big",
   email: "littlegurusacademy@gmail.com",
+  grievanceEmail: "littlegurusacademy@gmail.com",
   hours: "Mon–Fri, 7:00 PM – 9:00 PM IST",
   mode: "100% Online · Mobile App · YouTube · Instagram",
+  address: "Gurgaon, Haryana 122004, India",
+  dataFiduciary: "Little Gurus Academy",
   instagram: "https://www.instagram.com/littlegurus_in?igsh=bzk5bmVpMXVoY243",
   youtube: "https://youtube.com/@littlegurusacademy?feature=shared",
 };

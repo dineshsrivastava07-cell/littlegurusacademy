@@ -4,10 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Mail, Clock, Instagram, Youtube, MapPin, Send, CheckCircle2 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { SITE } from "@/lib/data";
 import { submitContact } from "@/lib/api";
 import { FadeIn, SectionLabel, Blob } from "@/components/Bits";
@@ -17,19 +19,25 @@ const schema = z.object({
   email: z.string().email("Enter a valid email"),
   subject: z.string().max(120).optional().or(z.literal("")),
   message: z.string().min(5, "Tell us a little more"),
+  consent: z.literal(true, {
+    errorMap: () => ({ message: "Please give consent to continue (DPDP Act, 2023)" }),
+  }),
 });
 
 export default function Contact() {
   const [done, setDone] = useState(false);
   const form = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { name: "", email: "", subject: "", message: "" },
+    defaultValues: { name: "", email: "", subject: "", message: "", consent: false },
     mode: "onTouched",
   });
 
+  const consentValue = form.watch("consent") || false;
+
   const onSubmit = async (data) => {
     try {
-      await submitContact(data);
+      const { consent: _consent, ...payload } = data;
+      await submitContact(payload);
       toast.success("Thanks for writing! We'll reply within 24 hours.");
       setDone(true);
       form.reset();
@@ -155,6 +163,23 @@ export default function Contact() {
                     </Field>
                   </div>
                 </div>
+                <div className="mt-5 rounded-2xl bg-amber-50/70 border-2 border-amber-100 p-4 flex items-start gap-3" data-testid="contact-consent-wrap">
+                  <Checkbox
+                    id="contact-consent"
+                    checked={consentValue}
+                    onCheckedChange={(v) => form.setValue("consent", v === true, { shouldValidate: true })}
+                    className="mt-0.5 h-5 w-5 border-2 border-slate-300 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
+                    data-testid="contact-consent-checkbox"
+                  />
+                  <label htmlFor="contact-consent" className="text-sm text-slate-700 leading-relaxed cursor-pointer select-none">
+                    I consent to Little Gurus Academy processing my personal data per the{" "}
+                    <Link to="/privacy-policy" className="font-semibold text-orange-600 hover:text-orange-700 underline underline-offset-2">Privacy Policy</Link>{" "}
+                    and India's <b>DPDP Act, 2023</b>.
+                  </label>
+                </div>
+                {form.formState.errors.consent?.message && (
+                  <p className="mt-2 text-xs font-semibold text-rose-600" data-testid="contact-consent-error">{form.formState.errors.consent.message}</p>
+                )}
                 <Button type="submit" disabled={form.formState.isSubmitting}
                         className="mt-6 w-full h-14 rounded-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-base shadow-md shadow-orange-500/20"
                         data-testid="contact-submit-btn">

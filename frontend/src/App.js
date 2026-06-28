@@ -8,6 +8,9 @@ import Programs from "@/pages/Programs";
 import Admissions from "@/pages/Admissions";
 import Gallery from "@/pages/Gallery";
 import Contact from "@/pages/Contact";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import Terms from "@/pages/Terms";
+import ConsentBanner from "@/components/ConsentBanner";
 
 function App() {
   return (
@@ -21,8 +24,11 @@ function App() {
             <Route path="/admissions" element={<Admissions />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<Terms />} />
           </Route>
         </Routes>
+        <ConsentBanner />
       </BrowserRouter>
       <Toaster position="top-center" richColors closeButton />
     </div>
