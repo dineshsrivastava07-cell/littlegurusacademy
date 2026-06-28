@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { Sparkles, Instagram, Youtube, Mail, Clock, ArrowRight, ShieldCheck, MapPin } from "lucide-react";
+import { Instagram, Youtube, Mail, Clock, ArrowRight, ShieldCheck, MapPin, Sparkles } from "lucide-react";
 import { NAV_LINKS, SITE } from "@/lib/data";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -67,9 +67,9 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 pb-12">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
           <div className="lg:col-span-1">
-            <Link to="/" className="flex items-center gap-2">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-400 to-orange-500 text-white">
-                <Sparkles className="h-5 w-5" strokeWidth={2.5} />
+            <Link to="/" className="flex items-center gap-3">
+              <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white p-1.5 shadow-md">
+                <img src="/logo.png" alt="Little Gurus Academy" className="h-full w-full object-contain" width="48" height="48" />
               </span>
               <span className="font-display text-2xl font-semibold text-white">
                 Little <span className="text-orange-400">Gurus</span>

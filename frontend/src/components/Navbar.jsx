@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { NAV_LINKS, SITE } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 
@@ -30,11 +30,15 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 h-20 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 group" data-testid="nav-logo">
-          <span className="relative inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-400 to-orange-500 text-white shadow-sm group-hover:scale-105 transition-transform">
-            <Sparkles className="h-5 w-5" strokeWidth={2.5} />
-          </span>
-          <span className="font-display text-xl sm:text-2xl font-semibold text-slate-800 leading-none">
+        <Link to="/" className="flex items-center gap-3 group" data-testid="nav-logo">
+          <img
+            src="/logo.png"
+            alt="Little Gurus Academy"
+            className="h-12 sm:h-14 w-auto object-contain group-hover:scale-105 transition-transform"
+            width="56"
+            height="56"
+          />
+          <span className="hidden sm:inline font-display text-xl sm:text-2xl font-semibold text-slate-800 leading-none">
             Little <span className="text-orange-500">Gurus</span>
           </span>
         </Link>
