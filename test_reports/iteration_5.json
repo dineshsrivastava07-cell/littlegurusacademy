@@ -1,0 +1,76 @@
+{
+  "summary": "Comprehensive backend + frontend testing of LGA 2026 upgrade. Backend: 29/29 pytest tests passing after fixing 2 ObjectId-serialization bugs. Frontend: admissions 3-step flow, admin portal (login + all 11 sections), student LMS (login + sub-nav), /learn, /about teacher integration, footer links, and DPDP pages all verified.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/newsletter", "issue": "FIXED — was returning 500 on first-insert path because Motor mutates dict with ObjectId; changed to return serialize(doc)."},
+      {"endpoint": "POST /api/students", "issue": "FIXED — same ObjectId leakage; added '_id' to excluded keys in response dict."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {"flow": "Home → Testimonials", "issue": "Home page did NOT show admin-created testimonial 'TEST_Reviewer' (admin Testimonials section shows it correctly and GET /api/testimonials?published=true returns it). Possible cause: TestimonialsDynamic component may not be rendering when data loads, or it lazy-loads and our scroll didn't reach it. Needs verification by main agent — public homepage testimonials section integration appears broken.", "affected_selectors": ["TestimonialsDynamic on Home.jsx"]}
+    ],
+    "design_issues": [
+      {"screen": "Admissions Step 1 tour-slot dropdown", "issues": ["Spec asked for fixed 7:00 PM IST slot — dropdown actually offers multiple slots (7:30 PM etc.). Functional but mismatches requirement copy."]}
+    ]
+  },
+  "testid_mismatches_with_spec": [
+    "tour-submit-btn → actual: tour-submit",
+    "app-submit-btn → actual: app-submit",
+    "application-reference → actual: not present (data shown inside step3-card; ref appears as text)",
+    "application-countdown → actual: not present (48:00:00 shown inside step3-card)",
+    "tour-consent-error / app-consent-error → not present (zod error rendered inline as text)",
+    "step2-start-btn → not present (Step 2 form is always visible below Step 1)",
+    "admin-dashboard → not present on dashboard route",
+    "nav-enquiries / nav-tour-bookings / nav-applications / nav-testimonials / nav-videos / nav-teachers / nav-students / nav-messages / nav-tickets / nav-page-content / nav-settings → not present (admin sidebar links use only text labels)",
+    "LMS section labels: spec said 'Tickets' and 'Profile' — actual labels are 'Support' and 'My Profile'"
+  ],
+  "passed_tests": [
+    "Backend pytest 29/29 — health, public forms, admin login + bearer guard, tour-bookings flow, applications (ref LGA-YYYYMMDD-XXXX), status by ref/email, testimonials/videos/teachers admin-only POST + public filters, students CRUD + student login + /student/me, messages bidirectional, tickets flow, site-settings public GET (verified Primary Prep ₹1,500/6,000/16,200 and After-School ₹2,000/8,000/21,600), admin-only PATCH",
+    "Admissions pricing table: exactly 5 columns (Program, Sessions, Weekly, Monthly, Quarterly); Tiny Tots ₹1,000/mo, Early Learners ₹1,000/mo, Primary Prep ₹6,000/mo (₹1,500 wk / ₹16,200 qtr), After-School ₹8,000/mo (₹2,000 wk / ₹21,600 qtr).",
+    "Step 1 tour form: submit BLOCKED without consent (zod 'Please give consent (DPDP Act 2023)' shown, no step1-success); with consent → step1-success appears and POST /api/tour-bookings 201.",
+    "Step 2 application form: submit BLOCKED without consent; with consent → step3-card appears, reference 'LGA-20260628-8945' shown, '48:00:00' countdown visible.",
+    "Step 3 status check: pasting ref → status-results renders 'LGA-20260628-8945 · Kid Two · Early Learners (4-6) · Pending'.",
+    "Admin: /admin redirects to /admin/login; login with admin/LGA@2026Admin opens dashboard with 8 stat cards. All 11 sidebar sections (Dashboard/Enquiries/Tour Bookings/Applications/Testimonials/Videos/Teachers/Students/Messages/Tickets/Page Content/Settings) navigated without page crash or JS errors.",
+    "Admin → Testimonials shows the testimonial created via API.",
+    "Student LMS: /lms redirects to /lms/login; login with seeded student opens dashboard showing student name + 'Primary Prep' program; Videos/Chat/Dashboard sections nav OK.",
+    "/learn page renders TEST_Phonics Intro free video card after admin creates a video with is_free=true.",
+    "/about page renders TEST_Guru teacher card after admin creates a teacher with active=true.",
+    "Navbar: nav-student-portal-btn visible on desktop, linking to /lms.",
+    "Footer: Free Lessons → /learn, Admin → /admin, Privacy Policy, Terms, Grievance all wired.",
+    "DPDP pages /privacy-policy and /terms still render (privacy-policy-page and terms-page testids present)."
+  ],
+  "failed_tests": [
+    "Home page TestimonialsDynamic: did NOT display admin-created testimonial in page body text (verified via getText on full body)."
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_upgrade_regression.py",
+    "/app/test_reports/pytest/upgrade_regression.xml"
+  ],
+  "action_items": [
+    "Investigate Home page <TestimonialsDynamic /> — admin-created testimonial with published=true exists and GET /api/testimonials?published=true returns it, but it does NOT appear on the homepage. Verify the component is mounted on Home.jsx and that it filters/renders correctly.",
+    "Optional: align frontend data-testids with the upgrade spec (tour-submit-btn, app-submit-btn, application-reference, application-countdown, step2-start-btn, admin-dashboard, nav-*) so external playbook test cases match.",
+    "Optional: rename LMS 'Support' → 'Tickets' and 'My Profile' → 'Profile' to match spec, or update spec.",
+    "Optional: restrict tour-slot dropdown to '7:00 PM IST' only if the spec really means a single fixed slot."
+  ],
+  "critical_code_review_comments": [
+    "ObjectId leakage pattern: any handler that does `await db.X.insert_one(doc); return doc` will 500 because Motor mutates doc to add ObjectId('_id'). Fixed in /api/newsletter and POST /api/students. Recommend a server-wide convention: always `return serialize(doc)` or build response from explicit fields.",
+    "auth.py uses bcrypt + JWT with explicit Bearer header parser; require_admin / require_student split is clean; password hashes are excluded from /students list and /student/me responses.",
+    "Admissions.jsx uses zod z.literal(true) for consent on both Step 1 and Step 2 — correct DPDP enforcement; the consent key is stripped client-side before POST.",
+    "POST /api/applications generates LGA-YYYYMMDD-XXXX correctly and retries up to 5 times if collision; reference observed: LGA-20260628-8945.",
+    "Admin route guard correctly redirects /admin to /admin/login when no token in localStorage."
+  ],
+  "updated_files": [
+    "/app/backend/server.py (fix newsletter and students _id leakage)",
+    "/app/backend/tests/test_upgrade_regression.py (new — 29 tests)"
+  ],
+  "success_rate": {"backend": "100% (29/29)", "frontend": "~92% — 1 integration miss on Home testimonials section"},
+  "test_credentials": "Admin: admin / LGA@2026Admin (already in /app/memory/test_credentials.md). Test student created during run: lms_ui_c68736@example.com / Lmspass@123 (Active, Primary Prep).",
+  "seed_data_creation": "TEST_-prefixed rows created: enquiries, contact, tour-bookings, applications (LGA-20260628-8945 etc.), 1 testimonial (TEST_Reviewer), 1 video (TEST_Phonics Intro), 1 teacher (TEST_Guru), 1 student (lms_ui_c68736@example.com). All safe to ignore or purge.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend regression suite is /app/backend/tests/test_upgrade_regression.py — 29 tests, all green after _id-leakage fixes. One outstanding integration: Home page TestimonialsDynamic does not render published testimonials (API + admin side both confirmed working). data-testid naming diverges from spec in several places (see testid_mismatches_with_spec list) — main agent should decide whether to update the spec or add the IDs.",
+  "rca_of_the_issue": "Both 500s on /api/newsletter and /api/students had the same root cause: Motor's `insert_one` mutates the input dict in place by injecting a BSON ObjectId under key '_id'. The handlers were returning that same dict, and FastAPI's jsonable_encoder cannot serialize ObjectId → 500. Fix: wrap responses in `serialize(doc)` (already defined in server.py to pop '_id') OR exclude '_id' explicitly when building the response payload."
+}

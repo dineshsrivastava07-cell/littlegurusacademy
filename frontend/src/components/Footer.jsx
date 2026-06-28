@@ -164,6 +164,8 @@ export default function Footer() {
             <Link to="/privacy-policy" className="hover:text-orange-300 font-semibold" data-testid="footer-privacy-link">Privacy Policy</Link>
             <Link to="/terms" className="hover:text-orange-300 font-semibold" data-testid="footer-terms-link">Terms of Use</Link>
             <Link to="/privacy-policy#grievance" className="hover:text-orange-300 font-semibold" data-testid="footer-grievance-link">Grievance</Link>
+            <Link to="/learn" className="hover:text-orange-300 font-semibold" data-testid="footer-learn-link">Free Lessons</Link>
+            <Link to="/admin" className="hover:text-orange-300 font-semibold opacity-50 hover:opacity-100" data-testid="footer-admin-link">Admin</Link>
             <span
               className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-3 py-1 font-bold tracking-wide"
               data-testid="footer-dpdp-badge"

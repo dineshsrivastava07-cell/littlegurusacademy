@@ -1,8 +1,10 @@
+import { useEffect, useState } from "react";
 import { Sparkles, Heart, Target, ShieldCheck, Wifi, Smile, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { FadeIn, SectionLabel, Blob } from "@/components/Bits";
+import { getPublicTeachers } from "@/lib/api";
 
 export default function About() {
   return (
@@ -77,6 +79,9 @@ export default function About() {
       </section>
 
       {/* Team */}
+      {/* Team (dynamic) */}
+      <TeamSection />
+
       {/* Safety & facilities */}
       <section className="relative py-20 sm:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
@@ -121,5 +126,47 @@ export default function About() {
         </div>
       </section>
     </div>
+  );
+}
+
+function TeamSection() {
+  const [team, setTeam] = useState([]);
+  useEffect(() => { getPublicTeachers().then(setTeam).catch(() => setTeam([])); }, []);
+  if (!team.length) return null;
+  return (
+    <section className="relative py-20 sm:py-24 bg-white" data-testid="team-section">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+        <div className="max-w-3xl">
+          <SectionLabel>Meet your gurus</SectionLabel>
+          <h2 className="mt-3 font-display text-4xl sm:text-5xl font-semibold text-slate-800 leading-tight">
+            Tiny humans. Mighty teachers.
+          </h2>
+          <p className="mt-4 text-lg text-slate-600">
+            Every educator is hand-picked, background-checked and trained in our gentle, play-first method.
+          </p>
+        </div>
+        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {team.map((t, i) => (
+            <FadeIn key={t.id} delay={i * 0.05}>
+              <Card className="overflow-hidden rounded-[2rem] bg-amber-50 border-2 border-amber-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300" data-testid={`team-card-${i}`}>
+                <div className="aspect-[4/5] overflow-hidden bg-orange-100 flex items-center justify-center">
+                  {t.photo_url ? (
+                    <img src={t.photo_url} alt={t.name} className="w-full h-full object-cover" loading="lazy" />
+                  ) : (
+                    <span className="font-display text-5xl font-bold text-orange-500">{(t.name || "?").slice(0,1)}</span>
+                  )}
+                </div>
+                <div className="p-5">
+                  <h3 className="font-display text-lg font-semibold text-slate-800">{t.name}</h3>
+                  <p className="text-xs font-bold uppercase tracking-widest text-orange-500 mt-1">{t.role}</p>
+                  {t.qualifications && <p className="text-xs text-slate-500 mt-1">{t.qualifications}</p>}
+                  <p className="mt-3 text-sm text-slate-600 leading-relaxed">{t.bio}</p>
+                </div>
+              </Card>
+            </FadeIn>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

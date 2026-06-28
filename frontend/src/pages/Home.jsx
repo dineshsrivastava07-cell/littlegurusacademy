@@ -278,6 +278,46 @@ function DayAtAcademy() {
   );
 }
 
+function TestimonialsDynamic() {
+  const [rows, setRows] = useState([]);
+  useEffect(() => { getPublicTestimonials().then(setRows).catch(() => setRows([])); }, []);
+  if (!rows.length) return null;
+  return (
+    <section className="relative py-20 sm:py-28 bg-white" data-testid="testimonials">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+        <div className="text-center max-w-2xl mx-auto">
+          <SectionLabel>What parents say</SectionLabel>
+          <h2 className="mt-3 font-display text-4xl sm:text-5xl font-semibold text-slate-800 leading-tight">Real words. Real grins.</h2>
+        </div>
+        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {rows.slice(0, 6).map((t) => (
+            <FadeIn key={t.id}>
+              <div className="h-full rounded-[2rem] bg-amber-50 border-2 border-amber-100 p-7" data-testid={`testimonial-card-${t.id}`}>
+                <Quote className="h-8 w-8 text-orange-400" strokeWidth={2.5} />
+                <p className="mt-3 text-slate-800 leading-relaxed">"{t.text}"</p>
+                <div className="mt-5 flex items-center gap-3">
+                  {t.photo_url ? (
+                    <img src={t.photo_url} alt={t.parent_name} className="h-11 w-11 rounded-full object-cover" />
+                  ) : (
+                    <span className="h-11 w-11 rounded-full bg-orange-500/20 text-orange-700 flex items-center justify-center font-bold">{(t.parent_name||"?").slice(0,1)}</span>
+                  )}
+                  <div className="min-w-0">
+                    <p className="font-bold text-slate-800 truncate">{t.parent_name}</p>
+                    {t.child_info && <p className="text-xs text-slate-500 truncate">{t.child_info}</p>}
+                    <div className="flex items-center gap-0.5 mt-0.5 text-amber-500">
+                      {[...Array(t.rating || 5)].map((_,i)=><Star key={i} className="h-3.5 w-3.5 fill-current" />)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function FinalCta() {
   return (
     <section className="relative pt-4 pb-16">

@@ -10,6 +10,9 @@ import Gallery from "@/pages/Gallery";
 import Contact from "@/pages/Contact";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import Terms from "@/pages/Terms";
+import Learn from "@/pages/Learn";
+import AdminPortal from "@/pages/Admin";
+import StudentLMS from "@/pages/StudentLMS";
 import ConsentBanner from "@/components/ConsentBanner";
 
 function App() {
@@ -17,6 +20,10 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
+          {/* Standalone (no public layout) */}
+          <Route path="/admin/*" element={<AdminPortal />} />
+          <Route path="/lms/*" element={<StudentLMS />} />
+          {/* Public site with shared layout */}
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
@@ -26,6 +33,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<Terms />} />
+            <Route path="/learn" element={<Learn />} />
           </Route>
         </Routes>
         <ConsentBanner />

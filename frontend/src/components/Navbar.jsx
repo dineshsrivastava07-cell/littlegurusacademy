@@ -65,6 +65,11 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
+          <Link to="/lms" data-testid="nav-student-portal-btn">
+            <Button variant="outline" className="rounded-full border-2 border-slate-200 hover:border-sky-300 hover:text-sky-600 hover:bg-sky-50 font-semibold px-4">
+              Student Portal
+            </Button>
+          </Link>
           <Link to="/admissions" data-testid="nav-book-tour-btn">
             <Button
               variant="outline"
@@ -118,6 +123,11 @@ export default function Navbar() {
               </NavLink>
             ))}
             <div className="mt-4 flex flex-col gap-3">
+              <Link to="/lms" onClick={() => setOpen(false)}>
+                <Button variant="outline" className="w-full h-14 rounded-2xl border-2 border-slate-200 text-base font-bold" data-testid="nav-mobile-student-portal">
+                  Student Portal
+                </Button>
+              </Link>
               <Link to="/admissions" onClick={() => setOpen(false)}>
                 <Button
                   variant="outline"
