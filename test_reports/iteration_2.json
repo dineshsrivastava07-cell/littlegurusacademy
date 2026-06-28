@@ -1,0 +1,51 @@
+{
+  "summary": "Frontend-only retest of iteration 1 fixes for Little Gurus Academy. 4/6 PASS. Two regressions still present: (1) URL ?program=... preselect on /admissions does NOT populate the program select trigger — it remains 'Pick a program' even though autoscroll works. (2) Mobile nav drawer renders with computed height 0px instead of full overlay despite `fixed top-20 left-0 right-0 bottom-0` classes — auto-height from top+bottom constraints is not being computed (likely a Tailwind/CSS layout issue; forcing inline height:732px makes the drawer render correctly with all 6 links visible).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "EnquiryForm (Admissions URL preselect)",
+        "issue": "Navigating to /admissions?program=Tiny%20Tots#enquiry leaves enquiry-program-select trigger showing placeholder 'Pick a program'. defaultProgram prop is passed and the useEffect setValue call appears to run, but form.watch('program') is not reflected in the controlled Select trigger. Note: validation error 'Pick a program' was visible in red below the select in a follow-up screenshot, confirming program value is empty. Autoscroll to #enquiry section works (rect.top = 0).",
+        "selector": "[data-testid='enquiry-program-select']",
+        "priority": "HIGH"
+      },
+      {
+        "component": "Navbar mobile drawer",
+        "issue": "On 375x812 viewport after clicking nav-mobile-toggle, the nav-mobile-menu element has computed style position:fixed, top:80px, bottom:0, left:0, right:0, display:block, visibility:visible — but getBoundingClientRect returns height: 0 (rectTop=80, rectBottom=80). No ancestor has transform/filter/will-change/perspective that would change containing block. Forcing inline `height: 732px` makes drawer render correctly with all 6 links visible. Recommend adding an explicit height like `h-[calc(100vh-5rem)]` or `h-screen pt-20` instead of relying on top+bottom auto-height.",
+        "selector": "[data-testid='nav-mobile-menu']",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "passed_tests": [
+    "Enquiry form submission on /admissions: POST /api/enquiries returned 201, enquiry-success element appeared.",
+    "Testimonials carousel: testimonial-text changes after testimonial-next click; testimonial-dot-2 active styling includes w-8.",
+    "Contact form smoke: contact-success appeared after valid submission.",
+    "Footer newsletter: input cleared after submit and success toast 'You're in! Watch for warm updates from the Gurus.' appeared.",
+    "Auto-scroll to #enquiry section works (enquiry section top = 0 in viewport)."
+  ],
+  "failed_tests": [
+    "URL ?program= preselect — trigger still shows placeholder.",
+    "Mobile drawer height — actual rendered height = 0px instead of >400px."
+  ],
+  "test_report_links": [],
+  "action_items": [
+    "FIX EnquiryForm: ensure the program Select trigger reflects defaultProgram from URL. Suggested approaches: (a) reset the form with the new default in a useEffect using form.reset({...form.getValues(), program: defaultProgram}) instead of setValue; or (b) pass `key={defaultProgram}` on EnquiryForm in Admissions.jsx so the form remounts with correct defaultValues when the URL param changes; or (c) verify form.watch('program') is actually re-rendering after setValue by destructuring `const { program: programValue } = form.watch()` or using `useWatch({ control: form.control, name: 'program' })`.",
+    "FIX Navbar mobile drawer: replace `fixed top-20 left-0 right-0 bottom-0` with an explicit height such as `fixed inset-x-0 top-20 h-[calc(100vh-5rem)]` (or `min-h-[calc(100vh-5rem)]`). The current top+bottom-only constraint is not yielding an auto-computed height in this layout."
+  ],
+  "critical_code_review_comments": [
+    "EnquiryForm.jsx uses form.watch in render body (line 42-43) which is fine but combined with controlled Radix Select can be brittle on prop-driven defaults. Prefer useWatch or form.reset for setting defaults from props.",
+    "Navbar mobile drawer relies on top+bottom auto-height which is fragile across browsers/layout contexts. Always set an explicit height for fixed full-screen overlays.",
+    "EnquiryForm useEffect dependency `[defaultProgram, form]` includes `form` object which is a stable ref in RHF; that's OK but worth noting."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "skipped", "frontend": "67% (4/6)"},
+  "test_credentials": "none required",
+  "seed_data_creation": "none",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Backend was already 100% in iteration 1 (skipped this iteration per request). Two regression bugs from iteration 1 are NOT fixed: (1) URL preselect on /admissions still broken — Select trigger shows placeholder; consider re-mounting EnquiryForm via key prop or using form.reset. (2) Mobile drawer height is 0 — needs explicit h-[calc(100vh-5rem)]. Other 4 flows (enquiry submit, testimonials carousel + dot, contact form, footer newsletter) all work correctly. Test viewport: desktop 1440x900, mobile 375x812 as specified.",
+  "rca_of_the_issue": "URL preselect: EnquiryForm initializes useForm with defaultValues.program=defaultProgram (initially empty since parent's useState starts ''). When Admissions's useEffect later sets defaultProgram='Tiny Tots', the EnquiryForm useEffect calls form.setValue('program', defaultProgram, {shouldValidate:false, shouldDirty:true}). Despite this, programValue via form.watch('program') is still '' when the Select renders — the Radix Select trigger shows placeholder. Likely cause: setValue without shouldTouch/proper subscription doesn't re-trigger the inline form.watch read in render. Mobile drawer: bounding rect height is 0 even though CSS reports position:fixed with top:80px, bottom:0, no transform ancestors. The auto-height computation from opposing inset values is not being honored in this layout context. Forcing inline height works."
+}
