@@ -79,7 +79,7 @@ export default function Contact() {
             <InfoCard
               icon={MapPin}
               label="Where we are"
-              title="100% Online · India-based, world-loved"
+              title="100% Online · Serving families across India"
               accent="emerald"
               testid="contact-info-location"
             />

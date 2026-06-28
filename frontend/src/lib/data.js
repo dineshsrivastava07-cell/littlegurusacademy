@@ -139,7 +139,7 @@ export const TESTIMONIALS = [
   {
     name: "Faisal & Zara (age 7)",
     text: "After-school class is the only screen-time I don't feel guilty about. Her reading has shot up two grade levels in four months.",
-    location: "Dubai",
+    location: "Delhi",
   },
   {
     name: "Meera & Kabir (age 3)",
