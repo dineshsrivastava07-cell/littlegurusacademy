@@ -169,10 +169,10 @@ export const DAY_TIMELINE = [
 ];
 
 export const FEES = [
-  { program: "Tiny Tots (2–4)", sessions: "3 / week · 25 min", monthly: "₹2,499", quarterly: "₹6,799" },
-  { program: "Early Learners (4–6)", sessions: "5 / week · 35 min", monthly: "₹3,999", quarterly: "₹10,999" },
-  { program: "Primary Prep (6–8)", sessions: "5 / week · 45 min", monthly: "₹4,999", quarterly: "₹13,999" },
-  { program: "After-School (8–10)", sessions: "5 / week · 60 min", monthly: "₹5,999", quarterly: "₹16,999" },
+  { program: "Tiny Tots (2–4)", sessions: "3 / week · 25 min", monthly: "₹1,000", quarterly: "₹2,700" },
+  { program: "Early Learners (4–6)", sessions: "5 / week · 35 min", monthly: "₹1,000", quarterly: "₹2,700" },
+  { program: "Primary Prep (6–8)", sessions: "5 / week · 45 min", monthly: "₹1,000", quarterly: "₹2,700" },
+  { program: "After-School (8–10)", sessions: "5 / week · 60 min", monthly: "₹1,000", quarterly: "₹2,700" },
 ];
 
 export const FAQS = [

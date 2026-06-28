@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, BackgroundTasks
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -13,6 +13,8 @@ from datetime import datetime, timezone
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
+
+from email_service import send_enquiry_emails, send_contact_email  # noqa: E402
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
@@ -90,11 +92,17 @@ async def health():
 
 
 @api_router.post("/enquiries", response_model=Enquiry, status_code=201)
-async def create_enquiry(payload: EnquiryCreate):
+async def create_enquiry(payload: EnquiryCreate, background: BackgroundTasks):
     enquiry = Enquiry(**payload.model_dump())
     doc = enquiry.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     await db.enquiries.insert_one(doc)
+    # Fire emails in background — never blocks or fails the response
+    background.add_task(
+        send_enquiry_emails,
+        enquiry.name, enquiry.email, enquiry.phone,
+        enquiry.child_age, enquiry.program, enquiry.message or "",
+    )
     return enquiry
 
 
@@ -108,11 +116,14 @@ async def list_enquiries():
 
 
 @api_router.post("/contact", response_model=ContactMessage, status_code=201)
-async def create_contact(payload: ContactMessageCreate):
+async def create_contact(payload: ContactMessageCreate, background: BackgroundTasks):
     msg = ContactMessage(**payload.model_dump())
     doc = msg.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     await db.contact_messages.insert_one(doc)
+    background.add_task(
+        send_contact_email, msg.name, msg.email, msg.subject or "", msg.message,
+    )
     return msg
 
 
