@@ -678,8 +678,8 @@ DEFAULT_SETTINGS = {
 async def get_site_settings():
     doc = await db.site_settings.find_one({"id": "singleton"}, {"_id": 0})
     if not doc:
-        await db.site_settings.insert_one(DEFAULT_SETTINGS)
-        return DEFAULT_SETTINGS
+        await db.site_settings.insert_one(dict(DEFAULT_SETTINGS))
+        return {k: v for k, v in DEFAULT_SETTINGS.items() if k != "_id"}
     return doc
 
 
@@ -881,7 +881,7 @@ async def startup():
 
     # Ensure site_settings singleton exists
     if not await db.site_settings.find_one({"id": "singleton"}):
-        await db.site_settings.insert_one(DEFAULT_SETTINGS)
+        await db.site_settings.insert_one(dict(DEFAULT_SETTINGS))
 
 
 @app.on_event("shutdown")

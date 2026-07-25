@@ -15,6 +15,28 @@ function authHeaders(key) {
 
 export const api = axios.create({ baseURL: API, headers: { "Content-Type": "application/json" } });
 
+// Global 401 handler: when a token expires/invalidates, clear it and bounce the
+// user to the right login screen instead of surfacing a raw "Token expired" error.
+api.interceptors.response.use(
+  (resp) => resp,
+  (error) => {
+    const status = error?.response?.status;
+    if (status === 401) {
+      const path = window.location.pathname || "";
+      try {
+        if (path.startsWith("/admin")) {
+          localStorage.removeItem("lga_admin_token");
+          if (!path.startsWith("/admin/login")) window.location.assign("/admin/login?expired=1");
+        } else if (path.startsWith("/lms")) {
+          localStorage.removeItem("lga_student_token");
+          if (!path.startsWith("/lms/login")) window.location.assign("/lms/login?expired=1");
+        }
+      } catch {}
+    }
+    return Promise.reject(error);
+  }
+);
+
 // ---- Public ----
 export const submitEnquiry = (data) => api.post("/enquiries", data).then((r) => r.data);
 export const submitContact = (data) => api.post("/contact", data).then((r) => r.data);

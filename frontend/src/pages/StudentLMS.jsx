@@ -39,6 +39,10 @@ function LMSLogin() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   useEffect(() => { if (studentToken()) nav("/lms"); }, [nav]);
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    if (p.get("expired")) toast.info("Your session expired. Please sign in again.");
+  }, []);
   const submit = async (e) => {
     e.preventDefault(); setLoading(true);
     try { const r = await studentLogin({ email, password }); setStudentToken(r.token); toast.success(`Welcome, ${r.user.name || "Guru"}!`); nav("/lms"); }

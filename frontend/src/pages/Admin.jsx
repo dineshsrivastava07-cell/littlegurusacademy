@@ -74,6 +74,10 @@ function AdminLogin() {
     } finally { setLoading(false); }
   };
   useEffect(() => { if (adminToken()) nav("/admin"); }, [nav]);
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    if (p.get("expired")) toast.info("Your session expired. Please sign in again.");
+  }, []);
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-6" data-testid="admin-login">
       <div className="w-full max-w-md rounded-3xl bg-slate-900 border border-slate-800 p-8 shadow-2xl">

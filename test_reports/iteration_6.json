@@ -1,0 +1,50 @@
+{
+  "summary": "Focused regression testing of the token-expiry bug fix and site-settings ObjectId fix for Little Gurus Academy. Wrote 13-test pytest suite (test_token_expiry_regression.py) — all 13 passing. Frontend Playwright verified: (a) invalid admin token in localStorage → protected route redirects to /admin/login?expired=1 with no raw 'Token expired' error and token cleared, (b) same behaviour for student LMS → /lms/login?expired=1, (c) public homepage unaffected, (d) valid admin token loads dashboard + Enquiries/Applications/Testimonials/Students sections without errors.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "passed_tests": [
+    "POST /api/admin/login with admin/LGA@2026Admin returns JWT whose iat→exp delta ≈ 72h (verified numerically after decode without signature).",
+    "GET /api/admin/stats with a valid admin JWT returns 200.",
+    "GET /api/admin/stats, /api/enquiries, /api/applications ALL return 401 when Authorization header is missing.",
+    "Same three endpoints return 401 when Authorization is 'Bearer invalid.token.here'.",
+    "Forged expired JWT (signed with real JWT_SECRET, exp in the past) → 401 on /api/admin/stats.",
+    "GET /api/site-settings returns 200 JSON with 'pricing' key, NO '_id' field, contains Primary Prep ₹6,000 monthly and After-School ₹8,000 monthly.",
+    "GET /api/testimonials?published=true returns 200 list with no auth required (public path unaffected).",
+    "GET /api/health 200.",
+    "GET /api/student/me with invalid token → 401 (parallel behaviour to admin).",
+    "Frontend: localStorage.setItem('lga_admin_token','invalid.token.here') then goto /admin/enquiries → redirected to /admin/login?expired=1, token cleared, NO 'Token expired' or 'Invalid token' text rendered on the page.",
+    "Frontend: same simulation with 'lga_student_token' → redirected to /lms/login?expired=1, token cleared, no raw error text.",
+    "Frontend: public home page (/) loads with 'Little Gurus' content and no auth redirect.",
+    "Frontend: with a freshly obtained valid admin JWT, /admin dashboard loads and Enquiries → Applications → Testimonials → Students sections all navigate without raw errors or 500s."
+  ],
+  "failed_tests": [],
+  "test_report_links": [
+    "/app/backend/tests/test_token_expiry_regression.py",
+    "/app/test_reports/pytest/token_expiry.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "auth.py: JWT_EXPIRE_HOURS is read at every create_token call via os.environ.get — good (no stale value across restarts).",
+    "api.js interceptor is scoped by pathname (startsWith('/admin') / startsWith('/lms')) and correctly avoids infinite redirect when already on the login page. Fallback for non-admin/non-lms paths just rejects the promise — reasonable.",
+    "GET /api/site-settings correctly excludes _id via projection {'_id': 0} on the find_one AND via a filter on DEFAULT_SETTINGS on the initial-insert path. No ObjectId leakage. Regression covered by test.",
+    "Toast on ?expired=1 is fired inside a useEffect on the login page — displays a session-expired info toast. Verified by code; runtime toast text was empty in the Playwright snapshot because sonner toasts auto-dismiss before evaluate() ran (~3s). Not a functional bug.",
+    "Minor: interceptor uses window.location.assign which triggers a full page reload — acceptable but a react-router navigate would preserve SPA state. Non-blocking."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_token_expiry_regression.py (new — 13 tests)"
+  ],
+  "success_rate": {"backend": "100% (13/13 new + previously 29/29 existing)", "frontend": "100% on the token-expiry redirect + regression flows exercised"},
+  "test_credentials": "Admin admin/LGA@2026Admin (per /app/memory/test_credentials.md).",
+  "seed_data_creation": "None. No TEST_ rows created in this iteration.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Bug fixes for token expiry + site-settings ObjectId are verified end-to-end. Regression suites at /app/backend/tests/test_upgrade_regression.py (29 tests) and /app/backend/tests/test_token_expiry_regression.py (13 tests) — both green. The interceptor lives at /app/frontend/src/lib/api.js — any future 401 handling changes should also update the toast wording in Admin.jsx / StudentLMS.jsx.",
+  "rca_of_the_issue": "Bug: admin site displayed raw 'Token expired' after 12h because (a) backend returned 401 with detail='Token expired' when JWT past exp, and (b) frontend had no global 401 handler — the raw error string leaked into a toast/UI. Fix (verified): (1) JWT_EXPIRE_HOURS bumped 12→72 in backend/.env (measured lifetime ~72h in test), (2) global axios response interceptor in /app/frontend/src/lib/api.js catches status===401, removes lga_admin_token / lga_student_token, and window.location.assigns('/admin/login?expired=1' | '/lms/login?expired=1'), (3) both login pages read ?expired=1 in a useEffect and show an info toast. Separately, GET /api/site-settings previously 500'd because the DEFAULT_SETTINGS fallback insert path returned a dict still carrying an ObjectId '_id' — fixed via projection + explicit _id filter in the fallback."
+}
