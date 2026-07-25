@@ -1,0 +1,23 @@
+{
+  "summary": "Tested 'Remember me' JWT lifetime (backend + frontend) and regressions. Backend: 10/10 pytest passed (default admin lifetime=72h, remember=720h; student same; invalid/missing token -> 401; /api/admin/stats OK with valid token; /api/site-settings returns pricing with no raw _id). Frontend: admin-remember and student-remember checkboxes render and toggle; admin login works with checkbox checked & unchecked; remember=true issues a 720h JWT (decoded in-browser confirmed 720.0h vs 72.0h default); token-expiry graceful redirect still works (invalid token in localStorage on /admin/enquiries -> /admin/login?expired=1, no raw 'Token expired' text); Dashboard/Enquiries/Applications/Testimonials/Students all load with valid token; public homepage loads.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/test_remember_me.py",
+    "/app/test_reports/pytest/remember_me.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "server.py line 702-705: dead POST /api/messages endpoint (Depends(lambda: None)) always raises 401; consider removing since /api/messages/student and /api/messages/admin already exist.",
+    "server.py is ~900 lines — consider splitting into routers per concern (auth, admin, students, cms, messages) for maintainability.",
+    "CORS: allow_credentials=False with allow_origins from env is fine since the app uses Bearer tokens (not cookies), no action needed."
+  ],
+  "updated_files": ["/app/backend/tests/test_remember_me.py"],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "test_credentials": "admin / LGA@2026Admin; test student created by test_remember_me.py: test_remember_student@example.com / student123",
+  "seed_data_creation": "Created (idempotent) student test_remember_student@example.com via /api/students during pytest run",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Remember-me feature verified end-to-end. JWT_EXPIRE_HOURS in backend .env is set (default env yields 72h). If backend restarts and env changes, adjust the 'default lifetime' assertion in test_remember_me.py (currently just asserts <29 days).",
+  "rca of the issue": "N/A — no bugs found in this iteration."
+}

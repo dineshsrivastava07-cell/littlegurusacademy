@@ -32,12 +32,13 @@ def verify_password(plain: str, hashed: str) -> bool:
         return False
 
 
-def create_token(*, sub: str, role: str, extra: dict | None = None) -> str:
+def create_token(*, sub: str, role: str, extra: dict | None = None, hours: int | None = None) -> str:
+    ttl = hours if hours is not None else _expires_hours()
     payload = {
         "sub": sub,
         "role": role,
         "iat": datetime.now(timezone.utc),
-        "exp": datetime.now(timezone.utc) + timedelta(hours=_expires_hours()),
+        "exp": datetime.now(timezone.utc) + timedelta(hours=ttl),
     }
     if extra:
         payload.update(extra)

@@ -153,11 +153,13 @@ class ApplicationUpdate(BaseModel):
 class AdminLogin(BaseModel):
     username: str
     password: str
+    remember: bool = False
 
 
 class StudentLogin(BaseModel):
     email: EmailStr
     password: str
+    remember: bool = False
 
 
 class StudentCreate(BaseModel):
@@ -454,7 +456,8 @@ async def admin_login(payload: AdminLogin):
     admin = await db.admin_users.find_one({"username": payload.username.strip().lower()})
     if not admin or not verify_password(payload.password, admin["password_hash"]):
         raise HTTPException(401, "Invalid username or password")
-    token = create_token(sub=admin["id"], role="admin", extra={"username": admin["username"]})
+    hours = 24 * 30 if payload.remember else None  # 30 days if "remember me"
+    token = create_token(sub=admin["id"], role="admin", extra={"username": admin["username"]}, hours=hours)
     return {
         "token": token,
         "user": {"id": admin["id"], "username": admin["username"], "role": "admin"},
@@ -480,7 +483,8 @@ async def student_login(payload: StudentLogin):
         raise HTTPException(401, "Invalid email or password")
     if s.get("status") != "Active":
         raise HTTPException(403, "Student account is not active. Contact us.")
-    token = create_token(sub=s["id"], role="student", extra={"email": s["email"], "name": s.get("name", "")})
+    hours = 24 * 30 if payload.remember else None  # 30 days if "remember me"
+    token = create_token(sub=s["id"], role="student", extra={"email": s["email"], "name": s.get("name", "")}, hours=hours)
     return {
         "token": token,
         "user": {

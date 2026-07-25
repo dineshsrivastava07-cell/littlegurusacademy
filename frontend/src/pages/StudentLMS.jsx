@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   studentLogin, studentToken, setStudentToken, studentMe, studentVideos,
@@ -37,6 +38,7 @@ function LMSLogin() {
   const nav = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
   useEffect(() => { if (studentToken()) nav("/lms"); }, [nav]);
   useEffect(() => {
@@ -45,7 +47,7 @@ function LMSLogin() {
   }, []);
   const submit = async (e) => {
     e.preventDefault(); setLoading(true);
-    try { const r = await studentLogin({ email, password }); setStudentToken(r.token); toast.success(`Welcome, ${r.user.name || "Guru"}!`); nav("/lms"); }
+    try { const r = await studentLogin({ email, password, remember }); setStudentToken(r.token); toast.success(`Welcome, ${r.user.name || "Guru"}!`); nav("/lms"); }
     catch (err) { toast.error(formatApiError(err)); }
     finally { setLoading(false); }
   };
@@ -66,6 +68,10 @@ function LMSLogin() {
           <div><Label className="text-slate-700">Password</Label>
             <Input data-testid="student-password" value={password} onChange={(e)=>setPassword(e.target.value)} type="password" className="mt-1 h-12 rounded-xl border-2 border-slate-200" />
           </div>
+          <label className="flex items-center gap-2 cursor-pointer select-none">
+            <Checkbox checked={remember} onCheckedChange={(v)=>setRemember(v===true)} className="border-slate-300 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500" data-testid="student-remember" />
+            <span className="text-sm text-slate-600">Remember me for 30 days</span>
+          </label>
           <Button data-testid="student-login-btn" type="submit" disabled={loading} className="w-full h-12 rounded-xl bg-orange-500 hover:bg-orange-600 font-bold">
             {loading ? "Signing in..." : "Sign in"}
           </Button>

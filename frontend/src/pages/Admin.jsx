@@ -60,12 +60,13 @@ function AdminLogin() {
   const nav = useNavigate();
   const [u, setU] = useState("admin");
   const [p, setP] = useState("");
+  const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
   const submit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const r = await adminLogin({ username: u, password: p });
+      const r = await adminLogin({ username: u, password: p, remember });
       setAdminToken(r.token);
       toast.success("Welcome back, admin.");
       nav("/admin");
@@ -97,6 +98,10 @@ function AdminLogin() {
             <Input type="password" data-testid="admin-password" value={p} onChange={(e)=>setP(e.target.value)} autoComplete="current-password"
               className="mt-1 h-12 rounded-xl bg-slate-800 border-slate-700 text-white" />
           </div>
+          <label className="flex items-center gap-2 cursor-pointer select-none">
+            <Checkbox checked={remember} onCheckedChange={(v)=>setRemember(v===true)} className="border-slate-600 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500" data-testid="admin-remember" />
+            <span className="text-sm text-slate-300">Remember me for 30 days</span>
+          </label>
           <Button data-testid="admin-login-btn" type="submit" disabled={loading}
             className="w-full h-12 rounded-xl bg-orange-500 hover:bg-orange-600 font-bold">
             {loading ? "Signing in..." : "Sign in"}
