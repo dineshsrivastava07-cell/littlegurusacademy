@@ -698,13 +698,6 @@ async def update_site_settings(payload: SiteSettingsUpdate):
 
 
 # ============================================================ MESSAGES (chat)
-@api.post("/messages", status_code=201)
-async def create_message(payload: MessageCreate, claims: dict = Depends(lambda: None)):
-    # Dual auth: admin OR student
-    from fastapi import Request  # noqa
-    raise HTTPException(401, "Use /api/messages/student or /api/messages/admin")
-
-
 @api.post("/messages/student", status_code=201)
 async def student_send_message(payload: MessageCreate, claims: dict = Depends(require_student)):
     doc = {
