@@ -4,7 +4,7 @@ An EdTech online channel for preschool and tuition services.
 
 ## Overview
 
-Little Gurus Academy is an educational platform designed to provide quality online learning experiences for preschool and tuition students. Our mission is to make education accessible, engaging, and effective for young learners.
+Little Gurus Academy is an educational platform designed to provide quality online learning experiences for preschool and tuition students. Our mission is to make education accessible, engaging, and effective for all learners.
 
 ## Features
 
@@ -72,7 +72,7 @@ Contributions are welcome! Please feel free to submit a pull request or open an 
 
 ## License
 
-[Add your license information here]
+This project is licensed under the name **dsrailab**, with **AS** serving as a Leading Leader for the Littlegurus Academy. All rights reserved.
 
 ## Support
 
