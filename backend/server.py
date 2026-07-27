@@ -23,7 +23,7 @@ from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
 
-from email_service import send_enquiry_emails, send_contact_email
+from email_service import send_enquiry_emails, send_contact_email, send_tour_confirmation
 from auth import (
     hash_password, verify_password, create_token,
     require_admin, require_student,
@@ -127,14 +127,14 @@ class TourBookingCreate(BaseModel):
 
 
 class TourBookingUpdate(BaseModel):
-    status: Optional[str] = None  # Pending / Confirmed / Completed / Cancelled
+    status: Optional[str] = None
     notes: Optional[str] = None
 
 
 class ApplicationCreate(BaseModel):
     parent_name: str
     child_name: str
-    child_dob: str  # YYYY-MM-DD
+    child_dob: str
     child_age: str
     gender: str
     email: EmailStr
@@ -187,7 +187,7 @@ class StudentUpdate(BaseModel):
 
 class TestimonialCreate(BaseModel):
     parent_name: str
-    child_info: Optional[str] = ""  # "Child age 5, Tiny Tots"
+    child_info: Optional[str] = ""
     text: str
     rating: int = Field(ge=1, le=5, default=5)
     photo_url: Optional[str] = ""
@@ -206,8 +206,8 @@ class TestimonialUpdate(BaseModel):
 class VideoCreate(BaseModel):
     title: str
     description: Optional[str] = ""
-    subject: str  # Math / English / Science / Art / General
-    age_group: str  # 2-4 / 4-6 / 6-8 / 8-10 / All
+    subject: str
+    age_group: str
     video_url: str
     thumbnail_url: Optional[str] = ""
     duration: Optional[str] = ""
@@ -227,7 +227,7 @@ class VideoUpdate(BaseModel):
 
 class TeacherCreate(BaseModel):
     name: str
-    role: str  # subject/specialization shown on About
+    role: str
     bio: str
     qualifications: Optional[str] = ""
     photo_url: Optional[str] = ""
@@ -249,16 +249,16 @@ class TeacherUpdate(BaseModel):
 
 class MessageCreate(BaseModel):
     text: str = Field(min_length=1, max_length=4000)
-    student_id: Optional[str] = None  # admin must specify; student infers from token
+    student_id: Optional[str] = None
 
 
 class TicketCreate(BaseModel):
-    type: str  # Class Missed - Request Recording / Technical Issue / Fee Query / ...
+    type: str
     description: str = Field(min_length=2, max_length=4000)
 
 
 class TicketUpdate(BaseModel):
-    status: Optional[str] = None  # Open / In Progress / Resolved
+    status: Optional[str] = None
     response: Optional[str] = None
 
 
@@ -280,7 +280,7 @@ class SiteSettingsUpdate(BaseModel):
     instagram_url: Optional[str] = None
     youtube_url: Optional[str] = None
     notification_email: Optional[str] = None
-    pricing: Optional[List[dict]] = None  # [{program, sessions, weekly, monthly, quarterly}]
+    pricing: Optional[List[dict]] = None
 
 
 # ============================================================ HEALTH
@@ -357,13 +357,17 @@ async def create_tour_booking(payload: TourBookingCreate, background: Background
         "created_at": iso_now(),
     }
     await db.tour_bookings.insert_one(doc)
-    # fire admin email (background)
     background.add_task(
         send_enquiry_emails,
         f"{payload.parent_name} ({payload.child_name}, {payload.child_age})",
         payload.email, payload.phone, payload.child_age,
         f"TOUR · {payload.program}",
         f"Preferred: {payload.preferred_date} at {payload.preferred_slot}\n\n{payload.message or ''}",
+    )
+    background.add_task(
+        send_tour_confirmation,
+        payload.parent_name, payload.child_name, payload.program,
+        payload.preferred_date, payload.preferred_slot, payload.email,
     )
     return {"ok": True, "id": doc["id"], "booking": serialize(doc)}
 
@@ -393,7 +397,6 @@ async def _next_application_ref() -> str:
 
 @api.post("/applications", status_code=201)
 async def create_application(payload: ApplicationCreate, background: BackgroundTasks):
-    # Ensure unique reference number
     for _ in range(5):
         ref = await _next_application_ref()
         if not await db.applications.find_one({"reference": ref}):
@@ -456,7 +459,7 @@ async def admin_login(payload: AdminLogin):
     admin = await db.admin_users.find_one({"username": payload.username.strip().lower()})
     if not admin or not verify_password(payload.password, admin["password_hash"]):
         raise HTTPException(401, "Invalid username or password")
-    hours = 24 * 30 if payload.remember else None  # 30 days if "remember me"
+    hours = 24 * 30 if payload.remember else None
     token = create_token(sub=admin["id"], role="admin", extra={"username": admin["username"]}, hours=hours)
     return {
         "token": token,
@@ -483,7 +486,7 @@ async def student_login(payload: StudentLogin):
         raise HTTPException(401, "Invalid email or password")
     if s.get("status") != "Active":
         raise HTTPException(403, "Student account is not active. Contact us.")
-    hours = 24 * 30 if payload.remember else None  # 30 days if "remember me"
+    hours = 24 * 30 if payload.remember else None
     token = create_token(sub=s["id"], role="student", extra={"email": s["email"], "name": s.get("name", "")}, hours=hours)
     return {
         "token": token,
@@ -658,22 +661,22 @@ async def delete_teacher(tid: str):
 DEFAULT_SETTINGS = {
     "id": "singleton",
     "hero_headline": "Where little minds grow big.",
-    "hero_subhead": "Live, online preschool and after-school tutoring for ages 2–10. Tiny classes. Big hearted teachers. The kind of learning kids actually look forward to.",
+    "hero_subhead": "Live, online preschool and after-school tutoring for ages 2\u201310. Tiny classes. Big hearted teachers. The kind of learning kids actually look forward to.",
     "tagline": "Where little minds grow big",
-    "about_story": "We were founded by parents, for parents — building a calm, caring online classroom where every child is truly seen. Our promise is simple: small classes, kind gurus, and lessons that feel like play.",
+    "about_story": "We were founded by parents, for parents \u2014 building a calm, caring online classroom where every child is truly seen. Our promise is simple: small classes, kind gurus, and lessons that feel like play.",
     "contact_email": "littlegurusacademy@gmail.com",
     "contact_phone": "",
     "whatsapp_number": "",
-    "business_hours": "Mon–Fri, 7:00 PM – 9:00 PM IST",
+    "business_hours": "Mon\u2013Fri, 7:00 PM \u2013 9:00 PM IST",
     "address": "Gurgaon, Haryana 122004, India",
     "instagram_url": "https://www.instagram.com/littlegurus_in?igsh=bzk5bmVpMXVoY243",
     "youtube_url": "https://youtube.com/@littlegurusacademy?feature=shared",
     "notification_email": "littlegurusacademy@gmail.com",
     "pricing": [
-        {"program": "Tiny Tots (2–4)", "sessions": "3 / week · 25 min", "weekly": "₹250", "monthly": "₹1,000", "quarterly": "₹2,700"},
-        {"program": "Early Learners (4–6)", "sessions": "5 / week · 35 min", "weekly": "₹250", "monthly": "₹1,000", "quarterly": "₹2,700"},
-        {"program": "Primary Prep (6–8)", "sessions": "5 / week · 45 min", "weekly": "₹1,500", "monthly": "₹6,000", "quarterly": "₹16,200"},
-        {"program": "After-School (8–10)", "sessions": "5 / week · 60 min", "weekly": "₹2,000", "monthly": "₹8,000", "quarterly": "₹21,600"},
+        {"program": "Tiny Tots (2\u20134)", "sessions": "3 / week \u00b7 25 min", "weekly": "\u20b9250", "monthly": "\u20b91,000", "quarterly": "\u20b92,700"},
+        {"program": "Early Learners (4\u20136)", "sessions": "5 / week \u00b7 35 min", "weekly": "\u20b9250", "monthly": "\u20b91,000", "quarterly": "\u20b92,700"},
+        {"program": "Primary Prep (6\u20138)", "sessions": "5 / week \u00b7 45 min", "weekly": "\u20b91,500", "monthly": "\u20b96,000", "quarterly": "\u20b916,200"},
+        {"program": "After-School (8\u201310)", "sessions": "5 / week \u00b7 60 min", "weekly": "\u20b92,000", "monthly": "\u20b98,000", "quarterly": "\u20b921,600"},
     ],
 }
 
@@ -734,7 +737,6 @@ async def admin_send_message(payload: MessageCreate, claims: dict = Depends(requ
 async def student_get_messages(claims: dict = Depends(require_student)):
     cursor = db.messages.find({"student_id": claims["sub"]}, {"_id": 0}).sort("created_at", 1)
     msgs = await cursor.to_list(1000)
-    # Mark admin messages as read
     await db.messages.update_many(
         {"student_id": claims["sub"], "from_role": "admin", "read_by_student": False},
         {"$set": {"read_by_student": True}},
@@ -755,14 +757,12 @@ async def admin_get_messages(student_id: str = Query(...), claims: dict = Depend
 
 @api.get("/messages/admin/threads", dependencies=[Depends(require_admin)])
 async def admin_message_threads():
-    """Conversation list — last message per student."""
     students = await db.students.find({}, {"_id": 0, "id": 1, "name": 1, "email": 1, "program": 1}).to_list(500)
     out = []
     for s in students:
         last = await db.messages.find_one({"student_id": s["id"]}, {"_id": 0}, sort=[("created_at", -1)])
         unread = await db.messages.count_documents({"student_id": s["id"], "from_role": "student", "read_by_admin": False})
         out.append({**s, "last_message": last, "unread": unread})
-    # Sort: unread first, then last activity
     out.sort(key=lambda x: (-x["unread"], -(0 if not x.get("last_message") else 1)))
     return out
 
@@ -846,7 +846,6 @@ async def admin_stats():
 # ============================================================ STARTUP
 @app.on_event("startup")
 async def startup():
-    # Indexes
     try:
         await db.admin_users.create_index("username", unique=True)
         await db.students.create_index("email", unique=True)
@@ -855,7 +854,6 @@ async def startup():
     except Exception as e:
         logger.warning(f"Index creation: {e}")
 
-    # Seed admin
     admin_user = os.environ.get("ADMIN_USERNAME", "admin").lower()
     admin_pw = os.environ.get("ADMIN_PASSWORD", "LGA@2026Admin")
     existing = await db.admin_users.find_one({"username": admin_user})
@@ -868,7 +866,6 @@ async def startup():
         })
         logger.info(f"Seeded admin: {admin_user}")
     else:
-        # Refresh hash if env password changed
         if not verify_password(admin_pw, existing.get("password_hash", "")):
             await db.admin_users.update_one(
                 {"username": admin_user},
@@ -876,7 +873,6 @@ async def startup():
             )
             logger.info(f"Refreshed admin password for {admin_user}")
 
-    # Ensure site_settings singleton exists
     if not await db.site_settings.find_one({"id": "singleton"}):
         await db.site_settings.insert_one(dict(DEFAULT_SETTINGS))
 

@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="en-IN">
   <head>
+    <script type="text/javascript">
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = l.search.slice(1).split('&').map(function(s) {
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+            l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
@@ -28,26 +40,26 @@
     <meta name="keywords" content="online preschool India, early learning, after school tutoring, kids learning Gurgaon, online classes for kids, Little Gurus Academy" />
     <meta name="author" content="Little Gurus Academy" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://little-gurus-preview.emergent.host/" />
+    <link rel="canonical" href="https://littlegurus.guru/" />
 
-    <!-- Open Graph (WhatsApp / Facebook / LinkedIn preview) -->
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Little Gurus Academy" />
     <meta property="og:title" content="Little Gurus Academy" />
-    <meta property="og:description" content="Live online preschool & after-school tutoring. Gurgaon, Haryana 122004, India." />
-    <meta property="og:image" content="https://little-gurus-preview.emergent.host/logo.png" />
+    <meta property="og:description" content="Live online preschool &amp; after-school tutoring. Gurgaon, Haryana 122004, India." />
+    <meta property="og:image" content="https://littlegurus.guru/logo.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="640" />
     <meta property="og:image:height" content="640" />
     <meta property="og:image:alt" content="Little Gurus Academy owl logo" />
-    <meta property="og:url" content="https://little-gurus-preview.emergent.host" />
+    <meta property="og:url" content="https://littlegurus.guru" />
     <meta property="og:locale" content="en_IN" />
 
     <!-- Twitter / X card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Little Gurus Academy" />
-    <meta name="twitter:description" content="Live online preschool & after-school tutoring. Gurgaon, Haryana 122004, India." />
-    <meta name="twitter:image" content="https://little-gurus-preview.emergent.host/logo.png" />
+    <meta name="twitter:description" content="Live online preschool &amp; after-school tutoring. Gurgaon, Haryana 122004, India." />
+    <meta name="twitter:image" content="https://littlegurus.guru/logo.png" />
     <meta name="twitter:image:alt" content="Little Gurus Academy owl logo" />
 
     <!-- JSON-LD structured data -->
@@ -57,9 +69,9 @@
       "@type": "EducationalOrganization",
       "name": "Little Gurus Academy",
       "alternateName": "Little Gurus",
-      "url": "https://little-gurus-preview.emergent.host",
-      "logo": "https://little-gurus-preview.emergent.host/logo.png",
-      "image": "https://little-gurus-preview.emergent.host/logo.png",
+      "url": "https://littlegurus.guru",
+      "logo": "https://littlegurus.guru/logo.png",
+      "image": "https://littlegurus.guru/logo.png",
       "description": "Live online preschool and after-school tutoring for ages 2-10.",
       "email": "littlegurusacademy@gmail.com",
       "address": {

@@ -109,7 +109,7 @@ def enquiry_admin_html(name, email, phone, child_age, program, message):
 
 def enquiry_parent_html(name, program):
     body = f"""\
-<h2 style="margin:0 0 6px;font-size:22px;color:#0f172a;">Hi {_escape(name.split()[0] if name else "there")}, thank you! 💛</h2>
+<h2 style="margin:0 0 6px;font-size:22px;color:#0f172a;">Hi {_escape(name.split()[0] if name else 'there')}, thank you! 💛</h2>
 <p style="margin:0 0 14px;">We just received your enquiry for <b>{_escape(program)}</b>, and we are <b>so excited</b> to meet your little one.</p>
 <p style="margin:0 0 14px;">A friendly guru will reach out within <b>24 hours</b> to set up your free, no-pressure tour and demo class. In the meantime, feel free to peek at us on YouTube and Instagram.</p>
 <table role="presentation" cellpadding="0" cellspacing="0" style="margin:18px 0;">
@@ -126,12 +126,36 @@ def contact_admin_html(name, email, subject, message):
     body = f"""\
 <h2 style="margin:0 0 6px;font-size:22px;color:#0f172a;">New contact message 💬</h2>
 <p style="margin:0 0 14px;color:#475569;">From <b>{_escape(name)}</b> &lt;{_escape(email)}&gt;</p>
-<p style="margin:0 0 8px;color:#0f172a;"><b>Subject:</b> {_escape(subject or "(no subject)")}</p>
+<p style="margin:0 0 8px;color:#0f172a;"><b>Subject:</b> {_escape(subject or '(no subject)')}</p>
 <div style="padding:14px 16px;background:#FFFBEB;border-radius:12px;border:1px solid #fde9c8;white-space:pre-wrap;">
 {_escape(message)}
 </div>
 <p style="margin-top:16px;font-size:13px;color:#64748b;">Reply directly to {_escape(email)}.</p>"""
     return _wrapper("New message via Contact form", body)
+
+
+def tour_confirmation_html(parent_name, child_name, program, preferred_date, preferred_slot):
+    rows = [
+        ("Child", child_name),
+        ("Program", program),
+        ("Preferred date", preferred_date),
+        ("Preferred slot", preferred_slot),
+    ]
+    inner = "".join(
+        f'<tr><td style="padding:8px 0;font-size:13px;color:#64748b;width:140px;">{k}</td>'
+        f'<td style="padding:8px 0;font-weight:600;color:#0f172a;">{_escape(str(v))}</td></tr>'
+        for k, v in rows
+    )
+    body = f"""\
+<h2 style="margin:0 0 6px;font-size:22px;color:#0f172a;">Hi {_escape(parent_name.split()[0] if parent_name else 'there')}, your tour is confirmed! 🎉</h2>
+<p style="margin:0 0 14px;">We've received your free tour booking for <b>{_escape(program)}</b> — we can't wait to meet <b>{_escape(child_name)}</b>!</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px dashed #fde9c8;border-bottom:1px dashed #fde9c8;margin:10px 0;">
+{inner}
+</table>
+<p style="margin-top:18px;">A friendly guru will call you within <b>24 hours</b> to confirm the time and send you the video call link.</p>
+<p style="margin:18px 0 6px;color:#475569;font-size:14px;">If anything's urgent, just hit reply — a real human reads every email.</p>
+<p style="margin:0;color:#475569;font-size:14px;">With love,<br><b>The Little Gurus team</b></p>"""
+    return _wrapper("Your free tour is booked! ✨", body)
 
 
 # ---------- Public helpers ----------
@@ -158,4 +182,13 @@ async def send_contact_email(name, email, subject, message):
         "reply_to": email,
         "subject": f"Contact form · {subject or 'No subject'} · {name}",
         "html": contact_admin_html(name, email, subject, message),
+    })
+
+
+async def send_tour_confirmation(parent_name, child_name, program, preferred_date, preferred_slot, email):
+    await _send({
+        "from": _sender(),
+        "to": [email],
+        "subject": "Your free tour is booked! ✨ — Little Gurus Academy",
+        "html": tour_confirmation_html(parent_name, child_name, program, preferred_date, preferred_slot),
     })
