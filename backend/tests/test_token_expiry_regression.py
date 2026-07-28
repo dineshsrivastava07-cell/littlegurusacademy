@@ -6,11 +6,11 @@ import pytest
 import requests
 from datetime import datetime, timezone, timedelta
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://little-gurus-preview.preview.emergentagent.com").rstrip("/")
+BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://littlegurusacademy.vercel.app").rstrip("/")
 API = f"{BASE_URL}/api"
 
 ADMIN_USER = "admin"
-ADMIN_PASS = "LGA@2026Admin"
+ADMIN_PASS = os.environ.get("ADMIN_PASSWORD", "LGA@2026Admin")
 
 
 @pytest.fixture(scope="module")
@@ -53,8 +53,7 @@ def test_protected_endpoint_401_with_missing_token(endpoint):
 
 
 def test_protected_endpoint_401_with_expired_token():
-    """Forge an expired token using the real JWT_SECRET from backend env if available.
-    If secret unavailable, fall back to invalid-token behaviour (still 401)."""
+    """Forge an expired token using the real JWT_SECRET from backend env if available."""
     secret = os.environ.get("JWT_SECRET")
     if secret:
         payload = {
@@ -78,13 +77,11 @@ def test_site_settings_no_objectid_and_correct_pricing():
     assert "_id" not in data, "site-settings response must not contain mongo _id"
     assert "pricing" in data, "pricing key missing"
     pricing = data["pricing"]
-    # Locate Primary Prep and After-School rows regardless of list/dict shape
     flat = str(pricing)
     assert "Primary Prep" in flat
     assert "After-School" in flat or "After School" in flat
-    # Amount check — response includes 6000 and 8000 monthly
-    assert "6,000" in flat or "6000" in flat, "Primary Prep monthly ₹6,000 not found"
-    assert "8,000" in flat or "8000" in flat, "After-School monthly ₹8,000 not found"
+    assert "6,000" in flat or "6000" in flat, "Primary Prep monthly Rs.6,000 not found"
+    assert "8,000" in flat or "8000" in flat, "After-School monthly Rs.8,000 not found"
 
 
 # ---------- Public endpoints untouched by auth ----------
