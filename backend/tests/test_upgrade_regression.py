@@ -21,10 +21,10 @@ import uuid
 import pytest
 import requests
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://little-gurus-preview.preview.emergentagent.com").rstrip("/")
+BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://littlegurusacademy.vercel.app").rstrip("/")
 API = f"{BASE_URL}/api"
 ADMIN_USER = "admin"
-ADMIN_PASS = "LGA@2026Admin"
+ADMIN_PASS = os.environ.get("ADMIN_PASSWORD", "LGA@2026Admin")
 REF_PATTERN = re.compile(r"^LGA-\d{8}-\d{4}$")
 
 
@@ -117,7 +117,6 @@ def test_tour_booking_flow(session, admin_headers):
     assert r.status_code == 201, r.text
     bid = r.json()["id"]
 
-    # listing requires admin
     r_no = session.get(f"{API}/tour-bookings")
     assert r_no.status_code == 401
 
@@ -125,7 +124,6 @@ def test_tour_booking_flow(session, admin_headers):
     assert r_l.status_code == 200
     assert any(b["id"] == bid for b in r_l.json())
 
-    # PATCH status
     rp = session.patch(f"{API}/tour-bookings/{bid}", headers=admin_headers, json={"status": "Confirmed"})
     assert rp.status_code == 200
 
@@ -152,7 +150,6 @@ def test_application_status_by_ref(session, created_application):
     assert r.status_code == 200
     apps = r.json()["applications"]
     assert any(a["reference"] == ref for a in apps)
-    # admin_notes should be excluded
     assert all("admin_notes" not in a for a in apps)
 
 
@@ -196,7 +193,6 @@ def test_testimonial_public_published(session, created_testimonial):
     assert r.status_code == 200
     items = r.json()
     assert any(t["id"] == created_testimonial["id"] for t in items)
-    # all returned must be published
     assert all(t.get("published") is True for t in items)
 
 
@@ -310,18 +306,14 @@ def test_admin_cannot_call_student_only(session, admin_headers):
 # ----------------------------- MESSAGES
 def test_messages_bidirectional(session, student_headers, admin_headers, student_account):
     sid = student_account["id"]
-    # student -> admin
     r1 = session.post(f"{API}/messages/student", headers=student_headers, json={"text": "TEST hi from student"})
     assert r1.status_code == 201
-    # admin -> student
     r2 = session.post(f"{API}/messages/admin", headers=admin_headers, json={"text": "TEST reply from admin", "student_id": sid})
     assert r2.status_code == 201
-    # admin reads
     ra = session.get(f"{API}/messages/admin", headers=admin_headers, params={"student_id": sid})
     assert ra.status_code == 200
     texts = [m["text"] for m in ra.json()]
     assert "TEST hi from student" in texts and "TEST reply from admin" in texts
-    # student reads
     rs = session.get(f"{API}/messages/student", headers=student_headers)
     assert rs.status_code == 200
     s_texts = [m["text"] for m in rs.json()]
@@ -341,21 +333,17 @@ def test_admin_send_message_requires_student_id(session, admin_headers):
 
 # ----------------------------- TICKETS
 def test_ticket_flow(session, student_headers, admin_headers):
-    # student creates
     r = session.post(f"{API}/tickets", headers=student_headers, json={
         "type": "Technical Issue", "description": "TEST ticket — please ignore"
     })
     assert r.status_code == 201
     tid = r.json()["id"]
-    # student lists own
     rm = session.get(f"{API}/tickets/my", headers=student_headers)
     assert rm.status_code == 200
     assert any(t["id"] == tid for t in rm.json())
-    # admin lists
     ra = session.get(f"{API}/tickets", headers=admin_headers)
     assert ra.status_code == 200
     assert any(t["id"] == tid for t in ra.json())
-    # admin patches
     rp = session.patch(f"{API}/tickets/{tid}", headers=admin_headers,
                        json={"status": "Resolved", "response": "Fixed"})
     assert rp.status_code == 200
@@ -367,7 +355,6 @@ def test_site_settings_public(session):
     assert r.status_code == 200
     body = r.json()
     assert "pricing" in body and isinstance(body["pricing"], list)
-    # Verify upgraded pricing for Primary Prep & After-School
     by_prog = {p["program"]: p for p in body["pricing"]}
     pp = next((v for k, v in by_prog.items() if "Primary Prep" in k), None)
     asp = next((v for k, v in by_prog.items() if "After-School" in k), None)
