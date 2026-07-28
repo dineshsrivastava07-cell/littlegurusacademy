@@ -1,0 +1,39 @@
+{
+  "name": "Little Gurus Academy",
+  "short_name": "Little Gurus Academy",
+  "description": "Live online preschool and after-school tutoring for ages 2-10. Gurgaon, Haryana 122004, India",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fffbeb",
+  "theme_color": "#f97316",
+  "orientation": "portrait",
+  "lang": "en-IN",
+  "categories": ["education", "kids", "lifestyle"],
+  "icons": [
+    {
+      "src": "/logo-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo-maskable-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/logo.png",
+      "type": "image/png",
+      "sizes": "640x640",
+      "purpose": "any"
+    }
+  ]
+}
